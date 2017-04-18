@@ -78,7 +78,7 @@
         }
       },
       onEnter () {
-        if (this.text === '') {
+        if (this.text === '' || this.currentText === '') {
           this.$message({
             message: '请输入内容。',
             type: 'warning'
@@ -86,12 +86,14 @@
         } else {
           this.texts[this.current].value = this.currentText
           this.current = -1
+          this.currentText = ''
           this.isDetail = true
         }
       },
       onBlur () {
         this.current = -1
         this.isDetail = false
+        this.currentText = ''
       },
       drag (event, id) {
         console.log('dragStart: ' + id)

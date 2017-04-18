@@ -15,9 +15,9 @@
                                                            @keyup.enter="onEnter"
                                                            autofocus="true"
                                                            @blur="onBlur"
-                                                           size="50%"></input></el-col>
+                                                           ></input></el-col>
           <el-col v-else :span="19">
-            <div @click="showDetail(index)">{{value.value}}</div>
+            <div @click="showDetail(index)" @dblclick="onEdit(index)">{{value.value}}</div>
             <div v-if="current===index" class="date">{{value.date}}</div>
           </el-col>
             <el-col :span="4">
@@ -118,7 +118,14 @@
   .active {
     color: #13CE66;
   }
-
+  input{
+    border:0;
+    background: rgba(0,0,0,0);
+    color: #F7BA2A;
+    font-size:large;
+    word-wrap:break-word;
+    width: 100%;
+  }
   .date {
     font-size: 13px;
     color: #99A9BF;
@@ -145,7 +152,7 @@
   .list-complete-item:hover
   {
     background-color:#1F2D3D;
-    font-size: larger;
+    font-size: large;
   }
 
 </style>

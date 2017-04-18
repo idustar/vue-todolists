@@ -43,10 +43,10 @@
         isDetail: true,
         currentText: '',
         texts: [
-          {isComplete: true, value: '这是一条已完成的日程。', date: Date().toLocaleString()},
-          {isComplete: false, value: '这是一条未完成的日程。', date: Date().toLocaleString()},
+          {isComplete: true, value: '这是一条已完成的项目。', date: Date().toLocaleString()},
+          {isComplete: false, value: '这是一条未完成的项目。', date: Date().toLocaleString()},
           {isComplete: false, value: 'This is an English calender.', date: Date().toLocaleString()},
-          {isComplete: false, value: '按回车键即可添加日程。', date: Date().toLocaleString()}
+          {isComplete: false, value: '按回车键添加/修改项目，双击可编辑项目。', date: Date().toLocaleString()}
         ]
       }
     },

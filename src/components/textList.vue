@@ -50,10 +50,10 @@
         isCopy: false,
         currentText: '',
         texts: [
-          {isComplete: true, value: '这是一条已完成的日程。', date: Date().toLocaleString()},
-          {isComplete: false, value: '这是一条未完成的日程。', date: Date().toLocaleString()},
+          {isComplete: true, value: '这是一条已完成的项目。', date: Date().toLocaleString()},
+          {isComplete: false, value: '这是一条未完成的项目。', date: Date().toLocaleString()},
           {isComplete: false, value: 'This is an English calender.', date: Date().toLocaleString()},
-          {isComplete: false, value: '按回车键即可添加日程。', date: Date().toLocaleString()}
+          {isComplete: false, value: 'Enter 提交项目 | 双击 编辑项目 | 拖动 移动项目 | ⌘+拖动 复制项目', date: Date().toLocaleString()}
         ]
       }
     },
@@ -123,7 +123,7 @@
         this.isOnDrug = false
         this.isCopy = false
       },
-      allowDrop (event) {
+      allowDrop (event, id) {
         event.preventDefault()
         this.isOnDrug = false
       }

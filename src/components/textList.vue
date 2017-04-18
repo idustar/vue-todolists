@@ -5,27 +5,31 @@
 <template>
     <div class="textList">
       <transition-group name="list-complete" tag="p">
-        <el-row v-for="(value, index) in texts" v-bind:key="value.value" class="textlist list-complete-item"
-                :class="{activelist: value.isComplete}"
-                @click="onClose(index)">
-          <el-col :span="1">
-            <a class="el-icon-circle-check" :class="{active: value.isComplete}" @click="changeActive(index)"></a>
-          </el-col>
-          <el-col v-if="current===index && !isDetail" :span="19"><input v-model="currentText"
-                                                           @keyup.enter="onEnter"
-                                                           autofocus="true"
-                                                           @blur="onBlur"
-                                                           ></input></el-col>
-          <el-col v-else :span="19">
-            <div @click="showDetail(index)" @dblclick="onEdit(index)">{{value.value}}</div>
-            <div v-if="current===index" class="date">{{value.date}}</div>
-          </el-col>
-            <el-col :span="4">
-              <a class="el-icon-close" @click="onClose(index)"></a>
-              <a class="el-icon-edit" @click="onEdit(index)"></a>
+        <div v-for="(value, index) in texts" v-bind:key="value.value" class="textlist list-complete-item"
+             :class="{activelist: value.isComplete}"
+             draggable="true"
+             @dragstart="drag($event, index)" @drop="drop($event, index)" @dragover="allowDrop($event, index)"
+             @dragstart.meta="isCopy = true"
+             @drop.meta="dropCopy($event, index)">
+          <el-row>
+            <el-col :span="1">
+              <a class="el-icon-circle-check" :class="{active: value.isComplete}" @click="changeActive(index)"></a>
             </el-col>
-        </el-row>
-
+            <el-col v-if="current===index && !isDetail" :span="19"><input v-model="currentText"
+                                                             @keyup.enter="onEnter"
+                                                             autofocus="true"
+                                                             @blur="onBlur"
+                                                             ></input></el-col>
+            <el-col v-else :span="19">
+              <div @click="showDetail(index)" @dblclick="onEdit(index)">{{value.value}}</div>
+              <div v-if="current===index && !isOnDrug" class="date">{{value.date}}</div>
+            </el-col>
+              <el-col :span="4">
+                <a class="el-icon-close" @click="onClose(index)"></a>
+                <a class="el-icon-edit" @click="onEdit(index)"></a>
+              </el-col>
+          </el-row>
+        </div>
       </transition-group>
     </div>
 </template>
@@ -40,13 +44,16 @@
     data () {
       return {
         current: -1,
+        dom: '#',
         isDetail: true,
+        isOnDrug: false,
+        isCopy: false,
         currentText: '',
         texts: [
-          {isComplete: true, value: '这是一条已完成的项目。', date: Date().toLocaleString()},
-          {isComplete: false, value: '这是一条未完成的项目。', date: Date().toLocaleString()},
+          {isComplete: true, value: '这是一条已完成的日程。', date: Date().toLocaleString()},
+          {isComplete: false, value: '这是一条未完成的日程。', date: Date().toLocaleString()},
           {isComplete: false, value: 'This is an English calender.', date: Date().toLocaleString()},
-          {isComplete: false, value: '按回车键添加/修改项目，双击可编辑项目。', date: Date().toLocaleString()}
+          {isComplete: false, value: '按回车键即可添加日程。', date: Date().toLocaleString()}
         ]
       }
     },
@@ -84,7 +91,41 @@
       },
       onBlur () {
         this.current = -1
-        this.isDetail = true
+        this.isDetail = false
+      },
+      drag (event, id) {
+        console.log('dragStart: ' + id)
+        this.current = id
+        this.isOnDrug = true
+      },
+      drop (event, id) {
+        if (!this.isCopy) {
+          event.preventDefault()
+          console.log('drag: ' + this.current + ' => ' + id)
+          if (this.current > id) {
+            this.texts.splice(id, 0, this.texts[this.current])
+            this.texts.splice(this.current + 1, 1)
+          } else if (this.current < id) {
+            this.texts.splice(id + 1, 0, this.texts[this.current])
+            this.texts.splice(this.current, 1)
+          }
+          this.current = -1
+          this.isOnDrug = false
+        }
+        setTimeout(() => { this.isCopy = false }, 100)
+      },
+      dropCopy (event, id) {
+        event.preventDefault()
+        console.log('dragCopy: ' + this.current + ' => ' + id)
+        this.texts.splice(id, 0, this.texts[this.current])
+        this.texts[id].isComplete = false
+        this.texts[id].date = Date().toLocaleString()
+        this.isOnDrug = false
+        this.isCopy = false
+      },
+      allowDrop (event) {
+        event.preventDefault()
+        this.isOnDrug = false
       }
     }
   }
@@ -93,7 +134,8 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   .textlist{
-
+    padding: 0;
+    margin: 0;
   }
   .el-icon-close {
      float: right;
@@ -125,6 +167,8 @@
     font-size:large;
     word-wrap:break-word;
     width: 100%;
+    padding: 0;
+    margin:0;
   }
   .date {
     font-size: 13px;
@@ -138,7 +182,6 @@
     color: #ffffff;
     padding:10px 15px 10px 20px;
     border-radius: 5px;
-    width: 100%
   }
   .list-complete-enter, .list-complete-leave-active {
     opacity: 0;
